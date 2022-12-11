@@ -1,3 +1,5 @@
+import { getOpponent } from "./getOpponent";
+
 const checkCol = (field, colIdx, symbol) => {
   const col = field.map(row => row[colIdx]);
   return col.every(cell => cell === symbol);
@@ -39,13 +41,13 @@ const checkHasWin = (field, symbol) => {
   );
 };
 
-export const checkWinner = field => {
-  if (checkHasWin(field, 'X')) {
-    return 'X';
-  } else if (checkHasWin(field, 'O')) {
-    return 'O';
+export const checkWinner = (field, symbol) => {
+  if (checkHasWin(field, symbol)) {
+    return 'win';
+  } else if (checkHasWin(field, getOpponent(symbol))) {
+    return 'lose';
   } else if (isFieldFull(field)) {
-    return 'TIE';
+    return 'tie';
   }
   return null;
 };

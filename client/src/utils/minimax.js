@@ -1,19 +1,26 @@
 import { checkWinner } from './checkWinner';
 import { getAvailableMoves } from './getAvailableMoves';
+import { getOpponent } from './getOpponent';
 
-const SCORES = {
-  X: 1,
-  O: -1,
-  TIE: 0,
+const SCORES_MAX = {
+  win: 1,
+  lose: -1,
+  tie: 0,
 };
 
-const minimax = (field, isMaximizer, symbol = null, depth = Infinity) => {
-  const gameResult = checkWinner(field);
+const SCORES_MIN = {
+  win: -1,
+  lose: 1,
+  tie: 0,
+};
+
+const minimax = (field, isMaximizer, symbol, depth = Infinity) => {
+  const gameResult = checkWinner(field, symbol);
 
   if (gameResult !== null || depth === 0) {
     return {
       move: null,
-      moveScore: SCORES[gameResult],
+      moveScore: isMaximizer ? SCORES_MAX[gameResult] : SCORES_MIN[gameResult],
     };
   }
 
@@ -24,10 +31,15 @@ const minimax = (field, isMaximizer, symbol = null, depth = Infinity) => {
 
   availableMoves.forEach(move => {
     // play move
-    field[move[0]][move[1]] = isMaximizer ? 'X' : 'O';
+    field[move[0]][move[1]] = symbol;
 
     // get best move score
-    const { moveScore } = minimax(field, !isMaximizer, depth - 1);
+    const { moveScore } = minimax(
+      field,
+      !isMaximizer,
+      getOpponent(symbol),
+      depth - 1
+    );
 
     // restore move
     field[move[0]][move[1]] = '';

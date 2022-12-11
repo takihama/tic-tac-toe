@@ -5,8 +5,9 @@ import StartRestartButton from './StartRestartButton';
 
 import { checkWinner } from '../utils/checkWinner';
 import minimax from '../utils/minimax';
+import { getOpponent, SYMBOLS } from '../utils/getOpponent';
+import { getRandomPlayer } from '../utils/getRandomPlayer';
 
-const INITIAL_TURN = 'O';
 const INITIAL_FIELD = [
   ['', '', ''],
   ['', '', ''],
@@ -15,15 +16,15 @@ const INITIAL_FIELD = [
 
 const Game = () => {
   const [hasGameStarted, setHasGameStarted] = useState(false);
-
   const [field, setField] = useState(INITIAL_FIELD);
-  const [turn, setTurn] = useState(INITIAL_TURN);
+  const [turn, setTurn] = useState();
   const [gameResult, setGameResult] = useState(null);
 
   const onStartGame = () => {
+    const randPlayer = getRandomPlayer();
     setHasGameStarted(true);
     setField(INITIAL_FIELD);
-    setTurn(INITIAL_TURN);
+    setTurn(randPlayer);
     setGameResult(null);
   };
 
@@ -39,23 +40,23 @@ const Game = () => {
       )
     );
 
-    setTurn(prevState => (prevState === 'X' ? 'O' : 'X'));
+    setTurn(prevState => getOpponent(prevState));
   };
 
   useEffect(() => {
     // if game not started, no need to check for game result
     if (!hasGameStarted) return;
 
-    const result = checkWinner(field);
+    const result = checkWinner(field, turn);
     if (result) {
       setGameResult(result);
     }
   }, [hasGameStarted, field]);
 
   useEffect(() => {
-    if (!hasGameStarted || gameResult || turn !== 'X') return;
+    if (!hasGameStarted || gameResult || turn !== SYMBOLS.O) return;
     
-    const { move } = minimax(field, true);
+    const { move } = minimax(field, true, turn);
     if (move === null) return;
 
     setField(
@@ -66,7 +67,7 @@ const Game = () => {
       )
     );
 
-    setTurn(prevState => (prevState === 'X' ? 'O' : 'X'));
+    setTurn(prevState => getOpponent(prevState));
   }, [field, turn]);
 
   return (
@@ -74,7 +75,7 @@ const Game = () => {
       {gameResult && (
         <Stack align="center" justify="center">
           <Heading fontSize="4xl">
-            {gameResult !== 'TIE' ? gameResult + ' is the Winner' : gameResult}
+            {gameResult}
           </Heading>
         </Stack>
       )}
