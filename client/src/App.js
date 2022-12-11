@@ -17,8 +17,16 @@ const Square = ({ value, handleOnSquareClick }) => {
 };
 
 const App = () => {
+  const [hasGameStarted, setHasGameStarted] = useState(false);
+
   const [field, setField] = useState(INITIAL_FIELD);
   const [turn, setTurn] = useState(INITIAL_TURN);
+
+  const onStartGame = () => {
+    setHasGameStarted(true);
+    setField(INITIAL_FIELD);
+    setTurn(INITIAL_TURN);
+  };
 
   const onSquareClick = (x, y) => {
     // if square has already a value, return
@@ -37,20 +45,43 @@ const App = () => {
 
   return (
     <Container bg="primary.300" h="100vh">
-      <Stack h="full" align="center" justify="center">
-        <Heading fontSize="4xl">{turn}'s turn</Heading>
-        {field.map((row, rowIdx) => (
-          <Stack key={rowIdx} direction="row">
-            {row.map((cell, colIdx) => (
-              <Square
-                key={colIdx}
-                value={cell}
-                handleOnSquareClick={() => onSquareClick(colIdx, rowIdx)}
-              />
-            ))}
-          </Stack>
-        ))}
-      </Stack>
+      {!hasGameStarted && (
+        <Stack h="full" align="center" justify="center">
+          <Button
+            bg="purple.900"
+            _hover={{ color: 'white', bg: 'purple.300' }}
+            size="lg"
+            onClick={onStartGame}
+          >
+            Start
+          </Button>
+        </Stack>
+      )}
+
+      {hasGameStarted && (
+        <Stack h="full" align="center" justify="center">
+          <Heading fontSize="4xl">{turn}'s turn</Heading>
+          {field.map((row, rowIdx) => (
+            <Stack key={rowIdx} direction="row">
+              {row.map((cell, colIdx) => (
+                <Square
+                  key={colIdx}
+                  value={cell}
+                  handleOnSquareClick={() => onSquareClick(colIdx, rowIdx)}
+                />
+              ))}
+            </Stack>
+          ))}
+          <Button
+            bg="purple.300"
+            _hover={{ color: 'white', bg: 'purple.900' }}
+            size="lg"
+            onClick={onStartGame}
+          >
+            Restart
+          </Button>
+        </Stack>
+      )}
     </Container>
   );
 };
