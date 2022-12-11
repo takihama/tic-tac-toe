@@ -14,7 +14,7 @@ const SCORES_MIN = {
   tie: 0,
 };
 
-const minimax = (field, isMaximizer, symbol, depth = Infinity) => {
+export const minimax = (field, isMaximizer, symbol, depth = Infinity) => {
   const gameResult = checkWinner(field, symbol);
 
   if (gameResult !== null || depth === 0) {
@@ -59,5 +59,3 @@ const minimax = (field, isMaximizer, symbol, depth = Infinity) => {
     moveScore: bestMoveScore,
   };
 };
-
-export default minimax;
