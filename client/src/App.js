@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Button, Container, Heading, Stack, Text } from '@chakra-ui/react';
+import { Button, Container, Heading, Stack } from '@chakra-ui/react';
+import Field from './components/Field';
+import StartRestartButton from './components/StartRestartButton';
 
 const INITIAL_TURN = 'X';
 const INITIAL_FIELD = [
@@ -7,14 +9,6 @@ const INITIAL_FIELD = [
   ['', '', ''],
   ['', '', ''],
 ];
-
-const Square = ({ value, handleOnSquareClick }) => {
-  return (
-    <Button bg="purple.500" w="100px" h="100px" onClick={handleOnSquareClick}>
-      <Text fontSize="6xl">{value}</Text>
-    </Button>
-  );
-};
 
 const App = () => {
   const [hasGameStarted, setHasGameStarted] = useState(false);
@@ -47,39 +41,15 @@ const App = () => {
     <Container bg="primary.300" h="100vh">
       {!hasGameStarted && (
         <Stack h="full" align="center" justify="center">
-          <Button
-            bg="purple.900"
-            _hover={{ color: 'white', bg: 'purple.300' }}
-            size="lg"
-            onClick={onStartGame}
-          >
-            Start
-          </Button>
+          <StartRestartButton value="Start" handleOnClick={onStartGame} />
         </Stack>
       )}
 
       {hasGameStarted && (
         <Stack h="full" align="center" justify="center">
           <Heading fontSize="4xl">{turn}'s turn</Heading>
-          {field.map((row, rowIdx) => (
-            <Stack key={rowIdx} direction="row">
-              {row.map((cell, colIdx) => (
-                <Square
-                  key={colIdx}
-                  value={cell}
-                  handleOnSquareClick={() => onSquareClick(colIdx, rowIdx)}
-                />
-              ))}
-            </Stack>
-          ))}
-          <Button
-            bg="purple.300"
-            _hover={{ color: 'white', bg: 'purple.900' }}
-            size="lg"
-            onClick={onStartGame}
-          >
-            Restart
-          </Button>
+          <Field field={field} handleOnSquareClick={onSquareClick} />
+          <StartRestartButton value="Restart" handleOnClick={onStartGame} />
         </Stack>
       )}
     </Container>
