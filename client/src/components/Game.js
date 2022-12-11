@@ -4,8 +4,9 @@ import Field from './Field';
 import StartRestartButton from './StartRestartButton';
 
 import { checkWinner } from '../utils/checkWinner';
+import minimax from '../utils/minimax';
 
-const INITIAL_TURN = 'X';
+const INITIAL_TURN = 'O';
 const INITIAL_FIELD = [
   ['', '', ''],
   ['', '', ''],
@@ -50,6 +51,23 @@ const Game = () => {
       setGameResult(result);
     }
   }, [hasGameStarted, field]);
+
+  useEffect(() => {
+    if (!hasGameStarted || gameResult || turn !== 'X') return;
+    
+    const { move } = minimax(field, true);
+    if (move === null) return;
+
+    setField(
+      field.map((row, rowIdx) =>
+        rowIdx !== move[0]
+          ? row
+          : row.map((col, colIdx) => (colIdx !== move[1] ? col : turn))
+      )
+    );
+
+    setTurn(prevState => (prevState === 'X' ? 'O' : 'X'));
+  }, [field, turn]);
 
   return (
     <Stack h="full" align="center" justify="center">
